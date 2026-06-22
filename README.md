@@ -3,6 +3,8 @@
 A minimal reference project showing how to wire migrations into a
 SQLAlchemy 2.x Python app based on this [post](https://gaultier.github.io/blog/I_sped_up_the_test_suite_by_x2.html) approach, but using Alembic.
 
+Post on my website explaining in more detail soon.
+
 ## Core Idea
 
 Each test creates a db session, which is at the same time a copy of a source of truth db with all the latest migrations. This way we have a fresh db for each testing. Check `config_test.py`. New db copies will be saved at `/tmp`.
