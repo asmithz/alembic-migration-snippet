@@ -5,9 +5,10 @@ SQLAlchemy 2.x Python app based on this [post](https://gaultier.github.io/blog/I
 
 ## Core Idea
 
-Each test creates a db session, which is at the same time a copy of a source of truth db with all the latest migrations. This way we have a fresh db for testing. Check `config_test.py`.
+Each test creates a db session, which is at the same time a copy of a source of truth db with all the latest migrations. This way we have a fresh db for each testing. Check `config_test.py`. New db copies will be saved at `/tmp`.
 
-Consider this implementation is based on Sqlite, since we can manage it as a file. Trying with PostgreSQL, wont work with this snippet as this engine has a client-server architecture (better to just do transactions and rollbacking on each test).
+Consider this implementation is based on Sqlite, since we can manage the db as a file. Implementing with PostgreSQL, wont work with this snippet as this engine has a client-server architecture (better to just do transactions and rollbacking on each test).
+
 
 ## Requirements
 
@@ -17,7 +18,7 @@ Consider this implementation is based on Sqlite, since we can manage it as a fil
 ## Setup
 
     uv sync
-    mkdir -p /tmp && touch /tmp/mydb.db
+    mkdir -p /tmp && touch /tmp/mydb.db 
 
 ### Run tests
 
@@ -25,28 +26,13 @@ Consider this implementation is based on Sqlite, since we can manage it as a fil
 
 ### Alembic
 
-Run these from inside the `app/` directory so Alembic auto-discovers
-`alembic.ini`.
+Under `alembic/versions` we have two migrations as example.
 
-    cd app
+    # Apply all pending migrations (we use this to update the db with new migrations)
+    uv run alembic upgrade head
 
-    # Show the current database revision
-    alembic current
-
-    # Show migration history
-    alembic history
-
-    # Apply all pending migrations
-    alembic upgrade head
-
-    # Roll back one migration
-    alembic downgrade -1
-
-    # Roll back every migration
-    alembic downgrade base
-
-    # Auto-generate a new migration from model changes
-    alembic revision --autogenerate -m "describe change"
+    # Auto-generate a new migration from model changes (generates a pending migration)
+    uv run alembic revision --autogenerate -m "describe change"
 
 ## Project layout
 
